@@ -1,78 +1,66 @@
-﻿
-
-using System;
+﻿using System;
 
 namespace TurningModel
 {
-    public enum CellContent
-    {
-        None, Left, Up, Right, Down,
-        LeftUp, RightUp, RightDown, LeftDown
-    };
-
     public class TurningCellGrid
     {
         public int height = 5;
         public int width = 5;
 
-        private CellContent[,] grid;
+        private GameTile[,] grid;
 
-        public static bool IsCellDiagonal(CellContent cell)
+        GameTile currentPiece, upcomingPiece;
+
+        bool IsInBounds(int cellX, int cellY)
         {
-            return cell == CellContent.LeftUp || cell == CellContent.RightUp
-                || cell == CellContent.RightDown || cell == CellContent.LeftDown;
+            return cellX >= 0 && cellX < width
+                && cellY >= 0 && cellY < height;
         }
 
-        public static Tuple<int, int> DirectionFromCellContent(CellContent content)
+        public void MakeMove(int cellX, int cellY)
         {
-            int dx = 0;
-            int dy = 0;
-            switch (content)
-            {
-                case CellContent.Left:
-                    dx = -1; dy = 0;
-                    break;
-                case CellContent.Up:
-                    dx = 0; dy = -1;
-                    break;
-                case CellContent.Right:
-                    dx = 1; dy = 0;
-                    break;
-                case CellContent.Down:
-                    dx = 0; dy = 1;
-                    break;
-                case CellContent.LeftUp:
-                    dx = -1; dy = -1;
-                    break;
-                case CellContent.RightUp:
-                    dx = +1; dy = -1;
-                    break;
-                case CellContent.RightDown:
-                    dx = +1; dy = +1;
-                    break;
-                case CellContent.LeftDown:
-                    dx = -1; dy = +1;
-                    break;
-                default:
-                    dx = dy = 0;
-                    break;
-            }
-            return new Tuple<int, int>(dx, dy);
+            RotateCellAt(cellX, cellY);
+            currentPiece = upcomingPiece;
+            upcomingPiece = GameTileUtils.GenerateRandomPiece();
         }
 
         public TurningCellGrid()
         {
+            currentPiece = GameTileUtils.GenerateRandomPiece();
+            upcomingPiece = GameTileUtils.GenerateRandomPiece();
             Init();
         }
 
-        public CellContent CellAt(int x, int y)
+        public GameTile CellAt(int x, int y)
         {
             return grid[x, y];
         }
 
+        public void PlaceCurrentTile(int cellX, int cellY)
+        {
+            Console.WriteLine("currentTile=" + currentPiece +
+                " upcoming = " + upcomingPiece);
+            grid[cellX, cellY] = currentPiece;
+            currentPiece = upcomingPiece;
+            upcomingPiece = GameTileUtils.GenerateRandomPiece();
+            var dXdY = GameTileUtils.DirectionFromGameTile(grid[cellX, cellY]);
+            var dx = dXdY.Item1;
+            var dy = dXdY.Item2;
+            var nextX = cellX + dx;
+            var nextY = cellY + dy;
+            if (IsInBounds(nextX, nextY) && grid[nextX, nextY] != GameTile.None)
+                RotateCellAt(nextX, nextY);
+        }
+
+        public void RotateCellAt(int x, int y)
+        {
+            grid[x, y] = GameTileUtils.RotateCell(grid[x, y]);
+        }
+
         void Init()
         {
-            grid = new CellContent[width, height];
+            GameTileUtils.GenerateRandomPiece();
+            grid = new GameTile[width, height];
             for (var y = 0; y < height; y++)
             {
                 for (var x = 0; x < width; x++)
@@ -80,30 +68,30 @@ namespace TurningModel
                     if (y == 0)
                     {
                         if (x == 0)
-                            grid[x, y] = CellContent.None;
+                            grid[x, y] = GameTile.None;
                         else if (x == 1)
-                            grid[x, y] = CellContent.Left;
+                            grid[x, y] = GameTile.Left;
                         else if (x == 2)
-                            grid[x, y] = CellContent.Up;
+                            grid[x, y] = GameTile.Up;
                         else if (x == 3)
-                            grid[x, y] = CellContent.Right;
+                            grid[x, y] = GameTile.Right;
                         else if (x == 4)
-                            grid[x, y] = CellContent.Down;
+                            grid[x, y] = GameTile.Down;
                     }
                     else if (y == 1)
                     {
                         if (x == 0)
-                            grid[x, y] = CellContent.None;
+                            grid[x, y] = GameTile.None;
                         else if (x == 1)
-                            grid[x, y] = CellContent.LeftUp;
+                            grid[x, y] = GameTile.LeftUp;
                         else if (x == 2)
-                            grid[x, y] = CellContent.RightUp;
+                            grid[x, y] = GameTile.RightUp;
                         else if (x == 3)
-                            grid[x, y] = CellContent.RightDown;
+                            grid[x, y] = GameTile.RightDown;
                         else if (x == 4)
-                            grid[x, y] = CellContent.LeftDown;
+                            grid[x, y] = GameTile.LeftDown;
                     }
-                    else grid[x, y] = CellContent.None;
+                    else grid[x, y] = GameTile.None;
                 }
             }
         }

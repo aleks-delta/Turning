@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿
 using System.Collections.Generic;
 
 namespace TurningModel
@@ -46,7 +46,7 @@ namespace TurningModel
     {
 
         //ArrowCoors Left, Up, Right, Down;
-        Dictionary<CellContent, ArrowCoors> coors;
+        Dictionary<GameTile, ArrowCoors> coors;
         bool IsInitialized;
 
         public Arrow()
@@ -54,27 +54,27 @@ namespace TurningModel
             IsInitialized = false;   
         }
        
-        public ArrowCoors ArrowFromCellContent(CellContent cell)
+        public ArrowCoors ArrowFromCellContent(GameTile cell)
         {
             if (!IsInitialized)
             {
-                coors = new Dictionary<CellContent, ArrowCoors>();
+                coors = new Dictionary<GameTile, ArrowCoors>();
 
                 //init left arrow
                 var LeftArrow = new ArrowCoors(-1, 0, +1, -1, +1, +1);
           
-                coors[CellContent.Left] = LeftArrow;
-                coors[CellContent.Up] = coors[CellContent.Left].RotateClockwise();
-                coors[CellContent.Right] = coors[CellContent.Up].RotateClockwise();
-                coors[CellContent.Down] = coors[CellContent.Right].RotateClockwise();
+                coors[GameTile.Left] = LeftArrow;
+                coors[GameTile.Up] = coors[GameTile.Left].RotateClockwise();
+                coors[GameTile.Right] = coors[GameTile.Up].RotateClockwise();
+                coors[GameTile.Down] = coors[GameTile.Right].RotateClockwise();
 
                 //init left-up arrow
                 float diagonalFactor = 0.7f;
                 var LeftUpArrow = new ArrowCoors(-1, -1, +diagonalFactor, -diagonalFactor, -diagonalFactor, +diagonalFactor);
-                coors[CellContent.LeftUp] = LeftUpArrow;
-                coors[CellContent.RightUp] = coors[CellContent.LeftUp].RotateClockwise();
-                coors[CellContent.RightDown] = coors[CellContent.RightUp].RotateClockwise();
-                coors[CellContent.LeftDown] = coors[CellContent.RightDown].RotateClockwise();
+                coors[GameTile.LeftUp] = LeftUpArrow;
+                coors[GameTile.RightUp] = coors[GameTile.LeftUp].RotateClockwise();
+                coors[GameTile.RightDown] = coors[GameTile.RightUp].RotateClockwise();
+                coors[GameTile.LeftDown] = coors[GameTile.RightDown].RotateClockwise();
                 IsInitialized = true;               
             }
             Arrow arrow = new Arrow();

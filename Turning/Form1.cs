@@ -15,6 +15,15 @@ namespace Turning
         private int arrowMarginInPixels = 5;
         private TurningCellGrid grid;
 
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            int cellX = (e.Location.X - gridMarginInPixels) / cellSizeInPixels;
+            int cellY = (e.Location.Y - gridMarginInPixels) / cellSizeInPixels;
+            //grid.MakeMove(cellX, cellY);
+            grid.PlaceCurrentTile(cellX, cellY);
+            Refresh();
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -27,12 +36,11 @@ namespace Turning
         {
             var centerX = gridMarginInPixels + x * cellSizeInPixels + cellSizeInPixels / 2;
             var centerY = gridMarginInPixels + y * cellSizeInPixels + cellSizeInPixels / 2;
-            if (grid.CellAt(x, y) == CellContent.None)
+            if (grid.CellAt(x, y) == GameTile.None)
                 g.FillRectangle(cellBrush, centerX, centerY, 2, 2);
-            else //if (grid.CellAt(x, y) == CellContent.Left)
+            else
             {
                 DrawArrow(g, x, y);
-                
             }
         }
 
@@ -43,7 +51,7 @@ namespace Turning
                                    gridMarginInPixels + y * cellSizeInPixels + halfCell);
 
             Arrow arrow = new Arrow();
-            CellContent cell = grid.CellAt(x, y);
+            GameTile cell = grid.CellAt(x, y);
             ArrowCoors coors = arrow.ArrowFromCellContent(cell);
 
             Point ptTip = new Point((int)(center.X + coors.dxTip * halfCell - coors.dxTip * arrowMarginInPixels), 
