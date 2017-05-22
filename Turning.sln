@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turning", "Turning\Turning.csproj", "{16842415-5BB2-4F1D-9469-3462FEBC77CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8F42EA5-7F82-4954-AFD6-CFDFDF17222B} = {E8F42EA5-7F82-4954-AFD6-CFDFDF17222B}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TurningModel", "TurningModel\TurningModel.csproj", "{E8F42EA5-7F82-4954-AFD6-CFDFDF17222B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16842415-5BB2-4F1D-9469-3462FEBC77CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16842415-5BB2-4F1D-9469-3462FEBC77CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16842415-5BB2-4F1D-9469-3462FEBC77CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16842415-5BB2-4F1D-9469-3462FEBC77CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8F42EA5-7F82-4954-AFD6-CFDFDF17222B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8F42EA5-7F82-4954-AFD6-CFDFDF17222B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8F42EA5-7F82-4954-AFD6-CFDFDF17222B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8F42EA5-7F82-4954-AFD6-CFDFDF17222B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
