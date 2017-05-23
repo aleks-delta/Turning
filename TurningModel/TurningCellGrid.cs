@@ -4,8 +4,8 @@ namespace TurningModel
 {
     public class TurningCellGrid
     {
-        public int height = 5;
-        public int width = 5;
+        public readonly int height = 5;
+        public readonly int width = 5;
 
         private GameTile[,] grid;
 
