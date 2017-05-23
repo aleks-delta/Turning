@@ -19,7 +19,7 @@ namespace TurningModel
 
         static int length = Enum.GetNames(typeof(GameTile)).Length;
 
-        public static GameTile RotateCell(GameTile cell)
+        public static GameTile RotateTile(GameTile cell)
         {
             switch (cell)
             {
@@ -84,7 +84,11 @@ namespace TurningModel
         internal static GameTile GenerateRandomPiece()
         {
             Random r = new Random();
-            return (GameTile)r.Next(1, length - 1);
+            const double diagProb = 0.0;
+            int diagFirstIndex = (int)GameTile.LeftUp;
+            if (r.NextDouble() < diagProb)
+                return (GameTile)r.Next(diagFirstIndex, length - 1);
+            return (GameTile)r.Next(1, diagFirstIndex);
         }
     }
 }
