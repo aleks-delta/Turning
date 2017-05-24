@@ -1,6 +1,6 @@
 ﻿namespace Turning
 {
-    partial class Form1
+    partial class GridForm
     {
         /// <summary>
         /// Required designer variable.

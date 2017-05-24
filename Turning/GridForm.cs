@@ -6,7 +6,7 @@ using TurningModel;
 namespace Turning
 {
     
-    public partial class Form1 : Form
+    public partial class GridForm : Form
     {
         private Pen gridPen, cellPen;
         private Brush cellBrush;
@@ -91,7 +91,7 @@ namespace Turning
                 3 * gridMarginInPixels + cellSizeInPixels * grid.height);
         }
 
-        public Form1()
+        public GridForm()
         {
             InitializeComponent();
             gridPen = new Pen(Color.Gray);
