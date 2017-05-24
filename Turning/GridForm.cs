@@ -36,7 +36,7 @@ namespace Turning
         {
             var centerX = gridMarginInPixels + x * cellSizeInPixels + cellSizeInPixels / 2;
             var centerY = gridMarginInPixels + y * cellSizeInPixels + cellSizeInPixels / 2;
-            if (grid.CellAt(x, y) == GameTile.None)
+            if (grid.CellAt(x, y) == GameTileKind.None)
                 g.FillRectangle(cellBrush, centerX, centerY, 2, 2);
             else
             {
@@ -51,7 +51,7 @@ namespace Turning
                                    gridMarginInPixels + y * cellSizeInPixels + halfCell);
 
             Arrow arrow = new Arrow();
-            GameTile cell = grid.CellAt(x, y);
+            GameTileKind cell = grid.CellAt(x, y);
             ArrowCoors coors = arrow.ArrowFromCellContent(cell);
 
             Point ptTip = new Point((int)(center.X + coors.dxTip * halfCell - coors.dxTip * arrowMarginInPixels), 
@@ -87,7 +87,8 @@ namespace Turning
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Size = new Size(3 * gridMarginInPixels + cellSizeInPixels * grid.width, 
+            this.Size = new Size(300+
+                3 * gridMarginInPixels + cellSizeInPixels * grid.width, 300+
                 3 * gridMarginInPixels + cellSizeInPixels * grid.height);
         }
 

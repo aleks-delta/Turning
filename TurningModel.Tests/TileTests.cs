@@ -9,16 +9,16 @@ namespace TurningModel.Tests
         [Test]
         public void LeftRotatesToUp()
         {
-            GameTile tile = GameTile.Left;
+            GameTileKind tile = GameTileKind.Left;
             var rotatedTile = GameTileUtils.RotateTile(tile);
-            Assert.AreEqual(GameTile.Up, rotatedTile);
+            Assert.AreEqual(GameTileKind.Up, rotatedTile);
         }
 
         public void TopRightRotatesToBottomRight()
         {
-            GameTile tile = GameTile.RightUp;
+            GameTileKind tile = GameTileKind.RightUp;
             var rotatedTile = GameTileUtils.RotateTile(tile);
-            Assert.AreEqual(GameTile.RightDown, rotatedTile);
+            Assert.AreEqual(GameTileKind.RightDown, rotatedTile);
         }
     }
 }

@@ -3,75 +3,108 @@ using System;
 
 namespace TurningModel
 {
-    public enum GameTile
+    public enum GameTileKind
     {
         None, Left, Up, Right, Down,
         LeftUp, RightUp, RightDown, LeftDown
     };
 
-    public static class GameTileUtils
+    public class GameTile
     {
-        public static bool IsCellDiagonal(GameTile cell)
+        public GameTileKind Kind { get; private set; }
+        public int HitPoints { get; private set; }
+
+        public GameTile()
         {
-            return cell == GameTile.LeftUp || cell == GameTile.RightUp
-                || cell == GameTile.RightDown || cell == GameTile.LeftDown;
+            Kind = GameTileKind.None;
+            HitPoints = GameTileUtils.OriginalHitPoints(Kind);
         }
 
-        static int length = Enum.GetNames(typeof(GameTile)).Length;
+        public GameTile(GameTileKind tileKind)
+        {
+            Kind = tileKind;
+            HitPoints = GameTileUtils.OriginalHitPoints(Kind);
+        }
+        public void RotateMe()
+        {
+            Kind = GameTileUtils.RotateTile(Kind);
+            if (HitPoints > 0)
+                HitPoints--;
+        }
+       
+    }
 
-        public static GameTile RotateTile(GameTile cell)
+    public static class GameTileUtils
+    {
+        public static bool IsCellDiagonal(GameTileKind cell)
+        {
+            return cell == GameTileKind.LeftUp || cell == GameTileKind.RightUp
+                || cell == GameTileKind.RightDown || cell == GameTileKind.LeftDown;
+        }
+
+        public static int OriginalHitPoints(GameTileKind cell)
+        {
+            if (cell == GameTileKind.None)
+                return 0;
+            else
+                return 4;
+        }
+
+        static int length = Enum.GetNames(typeof(GameTileKind)).Length;
+
+        public static GameTileKind RotateTile(GameTileKind cell)
         {
             switch (cell)
             {
-                case GameTile.Left:
-                    return GameTile.Up;
-                case GameTile.Up:
-                    return GameTile.Right;
-                case GameTile.Right:
-                    return GameTile.Down;
-                case GameTile.Down:
-                    return GameTile.Left;
-                case GameTile.LeftUp:
-                    return GameTile.RightUp;
-                case GameTile.RightUp:
-                    return GameTile.RightDown;
-                case GameTile.RightDown:
-                    return GameTile.LeftDown;
-                case GameTile.LeftDown:
-                    return GameTile.LeftUp;
+                case GameTileKind.Left:
+                    return GameTileKind.Up;
+                case GameTileKind.Up:
+                    return GameTileKind.Right;
+                case GameTileKind.Right:
+                    return GameTileKind.Down;
+                case GameTileKind.Down:
+                    return GameTileKind.Left;
+                case GameTileKind.LeftUp:
+                    return GameTileKind.RightUp;
+                case GameTileKind.RightUp:
+                    return GameTileKind.RightDown;
+                case GameTileKind.RightDown:
+                    return GameTileKind.LeftDown;
+                case GameTileKind.LeftDown:
+                    return GameTileKind.LeftUp;
                 default:
-                    return GameTile.None;
+                    return GameTileKind.None;
             }
         }
 
-        public static Tuple<int, int> DirectionFromGameTile(GameTile content)
+        public static Tuple<int, int> DirectionFromGameTile(GameTileKind content)
         {
             int dx = 0;
             int dy = 0;
             switch (content)
             {
-                case GameTile.Left:
+                case GameTileKind.Left:
                     dx = -1; dy = 0;
                     break;
-                case GameTile.Up:
+                case GameTileKind.Up:
                     dx = 0; dy = -1;
                     break;
-                case GameTile.Right:
+                case GameTileKind.Right:
                     dx = 1; dy = 0;
                     break;
-                case GameTile.Down:
+                case GameTileKind.Down:
                     dx = 0; dy = 1;
                     break;
-                case GameTile.LeftUp:
+                case GameTileKind.LeftUp:
                     dx = -1; dy = -1;
                     break;
-                case GameTile.RightUp:
+                case GameTileKind.RightUp:
                     dx = +1; dy = -1;
                     break;
-                case GameTile.RightDown:
+                case GameTileKind.RightDown:
                     dx = +1; dy = +1;
                     break;
-                case GameTile.LeftDown:
+                case GameTileKind.LeftDown:
                     dx = -1; dy = +1;
                     break;
                 default:
@@ -81,14 +114,14 @@ namespace TurningModel
             return new Tuple<int, int>(dx, dy);
         }
 
-        internal static GameTile GenerateRandomPiece()
+        internal static GameTileKind GenerateRandomTileKind()
         {
             Random r = new Random();
             const double diagProb = 0.0;
-            int diagFirstIndex = (int)GameTile.LeftUp;
+            int diagFirstIndex = (int)GameTileKind.LeftUp;
             if (r.NextDouble() < diagProb)
-                return (GameTile)r.Next(diagFirstIndex, length - 1);
-            return (GameTile)r.Next(1, diagFirstIndex);
+                return (GameTileKind)r.Next(diagFirstIndex, length - 1);
+            return (GameTileKind)r.Next(1, diagFirstIndex);
         }
     }
 }
