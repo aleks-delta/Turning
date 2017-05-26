@@ -55,11 +55,12 @@ namespace TurningModel
             return grid[x, y].HitPoints;
         }
 
-        public void PlaceSpecificTile(int cellX, int cellY, GameTileKind tile)
+        public void PlaceSpecificTile(int cellX, int cellY, GameTileKind tile, int externalHitPoints = -1)
         {
-            grid[cellX, cellY] = new GameTile(tile);
-            var originalHitPoints = GameTileUtils.OriginalHitPoints(tile);
-
+            grid[cellX, cellY] = (externalHitPoints < 0)
+                ? new GameTile(tile)
+                : new GameTile(tile, externalHitPoints);
+           
             bool needsRotation = true;
             do
             {
@@ -73,7 +74,8 @@ namespace TurningModel
                 if (needsRotation)
                 {
                     RotateCellAt(cellX, cellY);
-                    Score++;
+                    int score = 4 - grid [cellX, cellY].HitPoints;
+                    Score += score;
                 }
             } while (needsRotation);
         }
