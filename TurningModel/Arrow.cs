@@ -61,7 +61,7 @@ namespace TurningModel
                 coors = new Dictionary<GameTileKind, ArrowCoors>();
 
                 //init left arrow
-                var LeftArrow = new ArrowCoors(-1, 0, +1, -1, +1, +1);
+                var LeftArrow = new ArrowCoors(-1, 0, +1, +1, + 1, -1);
           
                 coors[GameTileKind.Left] = LeftArrow;
                 coors[GameTileKind.Up] = coors[GameTileKind.Left].RotateClockwise();

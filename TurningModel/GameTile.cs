@@ -27,11 +27,12 @@ namespace TurningModel
         }
         public void RotateMe()
         {
-            Kind = GameTileUtils.RotateTile(Kind);
             if (HitPoints > 0)
                 HitPoints--;
+            Kind = (HitPoints == 0) 
+                ? GameTileKind.None 
+                : Kind = GameTileUtils.RotateTile(Kind); 
         }
-       
     }
 
     public static class GameTileUtils

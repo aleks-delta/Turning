@@ -66,6 +66,29 @@ namespace TurningModel.Tests
             Assert.AreEqual(1, grid.Score);
         }
 
+        void SurroundCentralTileAndPointToIt()
+        {
+            grid.PlaceSpecificTile(2, 2, GameTileKind.Left);
+            grid.PlaceSpecificTile(3, 2, GameTileKind.Left);
+            grid.PlaceSpecificTile(1, 2, GameTileKind.Right);
+            grid.PlaceSpecificTile(2, 1, GameTileKind.Down);
+            grid.PlaceSpecificTile(2, 3, GameTileKind.Up);
+        }
+
+        [Test]
+        public void TileDisappearsAfter4HitPoints()
+        {
+            SurroundCentralTileAndPointToIt();
+            VerifyCellAt(GameTileKind.None, 2, 2);
+        }
+
+        [Test]
+        public void HitPointsReach0After4Hits()
+        {
+            SurroundCentralTileAndPointToIt();
+            Assert.AreEqual(0, grid.HitPointsAt(2, 2));
+        }
+
         private void VerifyCellAt(GameTileKind expectedTile, int x, int y)
         {
             Assert.AreEqual(expectedTile, grid.CellAt(x, y));

@@ -1,19 +1,33 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
+using System.Media;
 using TurningModel;
 
 namespace Turning
 {
-    
     public partial class GridForm : Form
     {
-        private Pen gridPen, cellPen;
+        private Pen gridPen, lightTilePen, darkTilePen;
         private Brush cellBrush;
         private int cellSizeInPixels = 50;
         private int gridMarginInPixels = 10;
         private int arrowMarginInPixels = 5;
         private TurningCellGrid grid;
+        SoundPlayer player;
+
+        private string SourceDirectory ()
+        {
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+            path = path.Replace("\\", "/");
+
+            path = path.Replace("/bin", "");
+            path = path.Replace("/Debug", "");
+            path = path.Replace("/Release", "");
+            return path;
+        }
 
         protected override void OnMouseClick(MouseEventArgs e)
         {
@@ -21,6 +35,9 @@ namespace Turning
             int cellY = (e.Location.Y - gridMarginInPixels) / cellSizeInPixels;
             //grid.MakeMove(cellX, cellY);
             grid.PlaceCurrentTile(cellX, cellY);
+
+            player.Play();
+
             Refresh();
         }
 
@@ -52,6 +69,7 @@ namespace Turning
 
             Arrow arrow = new Arrow();
             GameTileKind cell = grid.CellAt(x, y);
+            var hitPoints = grid.HitPointsAt(x, y);
             ArrowCoors coors = arrow.ArrowFromCellContent(cell);
 
             Point ptTip = new Point((int)(center.X + coors.dxTip * halfCell - coors.dxTip * arrowMarginInPixels), 
@@ -61,8 +79,34 @@ namespace Turning
                                       (int)(center.Y + coors.dySide1 * halfCell - coors.dySide1 * arrowMarginInPixels));
             Point ptSide2 = new Point((int)(center.X + coors.dxSide2 * halfCell - coors.dxSide2 * arrowMarginInPixels),
                                       (int)(center.Y + coors.dySide2 * halfCell - coors.dySide2 * arrowMarginInPixels));
-            g.DrawLine(gridPen, ptTip, ptSide1);
-            g.DrawLine(cellPen, ptTip, ptSide2);
+
+            Point ptSide1Middle = new Point( (ptSide1.X + ptTip.X) / 2, (ptSide1.Y + ptTip.Y) / 2);
+            Point ptSide2Middle = new Point((ptSide2.X + ptTip.X) / 2, (ptSide2.Y + ptTip.Y) / 2);
+
+            g.DrawLine(lightTilePen, ptTip, ptSide1);
+            g.DrawLine(lightTilePen, ptTip, ptSide2);
+
+            switch (hitPoints)
+            {
+                case 4:
+                    g.DrawLine(darkTilePen, ptTip, ptSide1);
+                    g.DrawLine(darkTilePen, ptTip, ptSide2);
+                    break;
+                case 3:
+                    //the left side and half of the right side will be dark
+                    g.DrawLine(darkTilePen, ptTip, ptSide1);
+                    g.DrawLine(darkTilePen, ptTip, ptSide2Middle);
+                    break;
+                case 2:
+                    //only the "left" side will be dark
+                    g.DrawLine(darkTilePen, ptTip, ptSide1); 
+                    break;
+                case 1:
+                    //only half of the "left" side will be dark
+                    g.DrawLine(darkTilePen, ptSide1, ptSide1Middle);
+                   
+                    break;
+            }
         }
 
         private void DrawCells(Graphics g)
@@ -96,12 +140,12 @@ namespace Turning
         {
             InitializeComponent();
             gridPen = new Pen(Color.Gray);
-            cellPen = new Pen(Color.Blue);
+            lightTilePen = new Pen(Color.LightBlue, 3);
+            darkTilePen = new Pen(Color.Blue, 3);
             cellBrush = Brushes.Blue;
 
-
             grid = new TurningCellGrid();
-           
+            player = new SoundPlayer(SourceDirectory() + "/Resources/drip1.wav");
         }
     }
 }
