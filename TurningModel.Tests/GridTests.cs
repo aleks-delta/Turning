@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
+using System.Drawing;
 
 namespace TurningModel.Tests
 {
     [TestFixture]
-    class GridTests
+    partial class GridTests
     {
         TurningCellGrid grid;
 
@@ -30,7 +31,7 @@ namespace TurningModel.Tests
         [Test]
         public void PlaceTile_InIsolation()
         {
-            grid.PlaceSpecificTile(2, 2, GameTileKind.Up);
+            grid.PlaceTile(2, 2, GameTileKind.Up);
             VerifyCellAndHitPointsAt(GameTileKind.Up, 4, 2, 2);
             VerifyScore(0);
         }
@@ -39,9 +40,9 @@ namespace TurningModel.Tests
         public void PlaceTile_AffectingOneOtherTile()
         {
             //this tile lands as is
-            grid.PlaceSpecificTile(2, 2, GameTileKind.Right);
+            grid.PlaceTile(2, 2, GameTileKind.Right);
             //this tile will make the next tile turn Down
-            grid.PlaceSpecificTile(1, 2, GameTileKind.Right);
+            grid.PlaceTile(1, 2, GameTileKind.Right);
 
             VerifyCellAndHitPointsAt(GameTileKind.Right, 4, 1, 2);
             VerifyCellAndHitPointsAt(GameTileKind.Down, 3, 2, 2);
@@ -52,9 +53,9 @@ namespace TurningModel.Tests
         public void PlaceTile_AffectingOneOtherHalfDone()
         {
             //this tile lands as is with 2 hit points left
-            grid.PlaceSpecificTile(2, 2, GameTileKind.Right, 2);
+            grid.PlaceTile(2, 2, GameTileKind.Right, 2);
             //this tile will make the next tile turn Down
-            grid.PlaceSpecificTile(1, 2, GameTileKind.Right);
+            grid.PlaceTile(1, 2, GameTileKind.Right);
 
             VerifyCellAndHitPointsAt(GameTileKind.Right, 4, 1, 2);
             VerifyCellAndHitPointsAt(GameTileKind.Down, 1, 2, 2);
@@ -65,9 +66,9 @@ namespace TurningModel.Tests
         public void PlaceTile_AffectingOneAlmostFinishedTile()
         {
             //this tile lands as is, with only 1 hit point left
-            grid.PlaceSpecificTile(2, 2, GameTileKind.Right, 1);
+            grid.PlaceTile(2, 2, GameTileKind.Right, 1);
             //this tile will make the next tile turn Down
-            grid.PlaceSpecificTile(1, 2, GameTileKind.Right);
+            grid.PlaceTile(1, 2, GameTileKind.Right);
 
             VerifyCellAndHitPointsAt(GameTileKind.Right, 4, 1, 2);
             VerifyCellAt(GameTileKind.None, 2, 2);
@@ -79,10 +80,26 @@ namespace TurningModel.Tests
         public void PlaceTile_FeedsBackToOriginalTile()
         {
             //this tile lands as is
-            grid.PlaceSpecificTile(2, 2, GameTileKind.Down);
+            grid.PlaceTile(2, 2, GameTileKind.Down);
             //this tile will make the Down tile turn Left, which will in turn cause the first tile to turn Down
-            grid.PlaceSpecificTile(1, 2, GameTileKind.Right);
+            grid.PlaceTile(1, 2, GameTileKind.Right);
 
+            VerifyCellAndHitPointsAt(GameTileKind.Down, 3, 1, 2);
+            VerifyCellAndHitPointsAt(GameTileKind.Left, 3, 2, 2);
+
+            VerifyScore(2);
+        }
+
+        [Test][Ignore("need to handle keeping tiles alive until the end of the move")]
+        public void PlaceTile_FeedsBackToOriginalTileAlmostDone()
+        {
+            //this tile lands as is
+            grid.PlaceTile(2, 2, GameTileKind.Down, 1);
+            //this tile will make the Down tile turn Left, which will in turn cause the first tile to turn Down
+            grid.PlaceTile(1, 2, GameTileKind.Right);
+
+            //currently the original cell turns to "None" too early, 
+            //we need to keep it alive and keep rotating until the whole move is over
             VerifyCellAndHitPointsAt(GameTileKind.Down, 3, 1, 2);
             VerifyCellAndHitPointsAt(GameTileKind.Left, 3, 2, 2);
 
@@ -92,9 +109,9 @@ namespace TurningModel.Tests
         [Test]
         public void ChainEndsOffGrid()
         {
-            grid.PlaceSpecificTile(0, 0, GameTileKind.Left);
+            grid.PlaceTile(0, 0, GameTileKind.Left);
             //this tile will make the Left tile turn to Up
-            grid.PlaceSpecificTile(0, 1, GameTileKind.Up);
+            grid.PlaceTile(0, 1, GameTileKind.Up);
             VerifyCellAt(GameTileKind.Up, 0, 0);
             VerifyCellAt(GameTileKind.Up, 0, 1);
             Assert.AreEqual(1, grid.Score);
@@ -116,11 +133,11 @@ namespace TurningModel.Tests
  
         void SurroundCentralTileAndPointToIt()
         {
-            grid.PlaceSpecificTile(2, 2, GameTileKind.Left);
-            grid.PlaceSpecificTile(3, 2, GameTileKind.Left);
-            grid.PlaceSpecificTile(1, 2, GameTileKind.Right);
-            grid.PlaceSpecificTile(2, 1, GameTileKind.Down);
-            grid.PlaceSpecificTile(2, 3, GameTileKind.Up);
+            grid.PlaceTile(2, 2, GameTileKind.Left);
+            grid.PlaceTile(3, 2, GameTileKind.Left);
+            grid.PlaceTile(1, 2, GameTileKind.Right);
+            grid.PlaceTile(2, 1, GameTileKind.Down);
+            grid.PlaceTile(2, 3, GameTileKind.Up);
         }
 
         private void VerifyCellAt(GameTileKind expectedTile, int x, int y)
@@ -138,5 +155,7 @@ namespace TurningModel.Tests
         {
             Assert.AreEqual(expectedScore, grid.Score, "score mismatch");
         }
+
+       
     }
 }

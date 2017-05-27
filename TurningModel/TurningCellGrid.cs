@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace TurningModel
 {
@@ -55,7 +56,38 @@ namespace TurningModel
             return grid[x, y].HitPoints;
         }
 
-        public void PlaceSpecificTile(int cellX, int cellY, GameTileKind tile, int externalHitPoints = -1)
+        public Point PlaceTileFirstStep(int cellX, int cellY, GameTileKind tile, int externalHitPoints = -1)
+        {
+            grid[cellX, cellY] = (externalHitPoints < 0)
+                ? new GameTile(tile)
+                : new GameTile(tile, externalHitPoints);
+            var dXdY = GameTileUtils.DirectionFromGameTile(grid[cellX, cellY].Kind);
+            var dx = dXdY.Item1;
+            var dy = dXdY.Item2;
+            cellX += dx;
+            cellY += dy;
+            return new Point(cellX, cellY);
+        }
+
+        public Point RotateAndShoot(int cellX, int cellY)
+        {
+            bool needsRotation = IsInBounds(cellX, cellY) && grid[cellX, cellY].Kind != GameTileKind.None;
+            if (needsRotation)
+            {
+                RotateCellAt(cellX, cellY);
+                int score = 4 - grid[cellX, cellY].HitPoints;
+                Score += score;
+                var dXdY = GameTileUtils.DirectionFromGameTile(grid[cellX, cellY].Kind);
+                var dx = dXdY.Item1;
+                var dy = dXdY.Item2;
+                cellX += dx;
+                cellY += dy;
+                return new Point(cellX, cellY);
+            }
+            return new Point(-1, -1);
+        }
+        
+        public void PlaceTile(int cellX, int cellY, GameTileKind tile, int externalHitPoints = -1)
         {
             grid[cellX, cellY] = (externalHitPoints < 0)
                 ? new GameTile(tile)
@@ -84,7 +116,7 @@ namespace TurningModel
         {
             Console.WriteLine("current = " + currentTile + "; next = " + nextTile);
 
-            PlaceSpecificTile(cellX, cellY, currentTile);
+            PlaceTile(cellX, cellY, currentTile);
             currentTile = nextTile;
             nextTile = GameTileUtils.GenerateRandomTileKind();
         }
