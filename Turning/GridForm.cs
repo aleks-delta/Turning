@@ -10,7 +10,7 @@ namespace Turning
 {
     public partial class GridForm : Form
     {
-        private Pen gridPen, lightTilePen, darkTilePen;
+        private Pen gridPen, lightTilePen, darkTilePen, hotTilePen;
         private Brush cellBrush;
         private int cellSizeInPixels = 50;
         private int gridMarginInPixels = 10;
@@ -104,7 +104,6 @@ namespace Turning
                 case 1:
                     //only half of the "left" side will be dark
                     g.DrawLine(darkTilePen, ptSide1, ptSide1Middle);
-                   
                     break;
             }
         }
@@ -142,6 +141,7 @@ namespace Turning
             gridPen = new Pen(Color.Gray);
             lightTilePen = new Pen(Color.LightBlue, 3);
             darkTilePen = new Pen(Color.Blue, 3);
+            hotTilePen = new Pen(Color.Red, 3);
             cellBrush = Brushes.Blue;
 
             grid = new TurningCellGrid();
