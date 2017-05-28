@@ -44,6 +44,7 @@
     <Compile Include="Arrow.cs" />
     <Compile Include="GameTile.cs" />
     <Compile Include="GameTileKind.cs" />
+    <Compile Include="MoveSequence.cs" />
     <Compile Include="TurningCellGrid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

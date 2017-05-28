@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace TurningModel
 {
-    public class TurningCellGrid
+    public partial class TurningCellGrid
     {
         public readonly int height = 5;
         public readonly int width = 5;
@@ -56,67 +56,12 @@ namespace TurningModel
             return grid[x, y].HitPoints;
         }
 
-        public Point PlaceTileFirstStep(int cellX, int cellY, GameTileKind tile, int externalHitPoints = -1)
-        {
-            grid[cellX, cellY] = (externalHitPoints < 0)
-                ? new GameTile(tile)
-                : new GameTile(tile, externalHitPoints);
-            var dXdY = GameTileUtils.DirectionFromGameTile(grid[cellX, cellY].Kind);
-            var dx = dXdY.Item1;
-            var dy = dXdY.Item2;
-            cellX += dx;
-            cellY += dy;
-            return new Point(cellX, cellY);
-        }
-
-        public Point RotateAndShoot(int cellX, int cellY)
-        {
-            bool needsRotation = IsInBounds(cellX, cellY) && grid[cellX, cellY].Kind != GameTileKind.None;
-            if (needsRotation)
-            {
-                RotateCellAt(cellX, cellY);
-                int score = 4 - grid[cellX, cellY].HitPoints;
-                Score += score;
-                var dXdY = GameTileUtils.DirectionFromGameTile(grid[cellX, cellY].Kind);
-                var dx = dXdY.Item1;
-                var dy = dXdY.Item2;
-                cellX += dx;
-                cellY += dy;
-                return new Point(cellX, cellY);
-            }
-            return new Point(-1, -1);
-        }
-        
-        public void PlaceTile(int cellX, int cellY, GameTileKind tile, int externalHitPoints = -1)
-        {
-            grid[cellX, cellY] = (externalHitPoints < 0)
-                ? new GameTile(tile)
-                : new GameTile(tile, externalHitPoints);
-           
-            bool needsRotation = true;
-            do
-            {
-                var dXdY = GameTileUtils.DirectionFromGameTile(grid[cellX, cellY].Kind);
-                var dx = dXdY.Item1;
-                var dy = dXdY.Item2;
-                cellX += dx;
-                cellY += dy;
-
-                needsRotation = IsInBounds(cellX, cellY) && grid[cellX, cellY].Kind != GameTileKind.None;
-                if (needsRotation)
-                {
-                    RotateCellAt(cellX, cellY);
-                    int score = 4 - grid [cellX, cellY].HitPoints;
-                    Score += score;
-                }
-            } while (needsRotation);
-        }
-
         public void PlaceCurrentTile(int cellX, int cellY)
         {
             Console.WriteLine("current = " + currentTile + "; next = " + nextTile);
 
-            PlaceTile(cellX, cellY, currentTile);
+            var move = new MoveSequence(this);
+            move.PlaceTile(cellX, cellY, currentTile);
             currentTile = nextTile;
             nextTile = GameTileUtils.GenerateRandomTileKind();
         }

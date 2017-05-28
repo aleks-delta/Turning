@@ -9,40 +9,50 @@ namespace TurningModel.Tests
         [Test]
         public void PlaceTile_AffectingOneOtherTileStepwise()
         {
+            var move = new TurningCellGrid.MoveSequence(grid);
             //this tile lands as is
-            grid.PlaceTile(2, 2, GameTileKind.Right);
+            move.PlaceTile(2, 2, GameTileKind.Right);
             //this tile will make the next tile turn Down
-            var nextPoint = grid.PlaceTileFirstStep(1, 2, GameTileKind.Right);
-            VerifyPoint(2, 2, nextPoint);
+            move.PlaceTileFirstStep(1, 2, GameTileKind.Right);
+            VerifyPoint(2, 2, move.CurPoint);
             
             VerifyCellAndHitPointsAt(GameTileKind.Right, 4, 2, 2);
             VerifyScore(0);
-            nextPoint = grid.RotateAndShoot(nextPoint.X, nextPoint.Y);
+            move.RotateAndShoot();
             VerifyCellAndHitPointsAt(GameTileKind.Down, 3, 2, 2);
 
-            VerifyPoint(2, 3, nextPoint);
-            VerifyCellAt(GameTileKind.None, nextPoint.X, nextPoint.Y);
+            VerifyPoint(2, 3, move.CurPoint);
+            VerifyCellAt(GameTileKind.None, 2, 3);
             VerifyScore(1);
         }
 
         [Test]
         public void PlaceTile_FeedsBackToOriginalTileStepwise()
         {
+            var move = new TurningCellGrid.MoveSequence(grid);
             //this tile lands as is
-            grid.PlaceTile(2, 2, GameTileKind.Down);
+            move.PlaceTile(2, 2, GameTileKind.Down);
             //this tile will make the Down tile turn Left, which will in turn cause the first tile to turn Down
-            grid.PlaceTileFirstStep(1, 2, GameTileKind.Right);
+            move.PlaceTileFirstStep(1, 2, GameTileKind.Right);
 
+            VerifyPoint(2, 2, move.CurPoint);
             VerifyCellAndHitPointsAt(GameTileKind.Right, 4, 1, 2);
             VerifyCellAndHitPointsAt(GameTileKind.Down, 4, 2, 2);
 
-            VerifyScore(0);
+            move.RotateAndShoot();
+            VerifyPoint(1, 2, move.CurPoint);
+            VerifyScore(1);
+
+            move.RotateAndShoot();
+            VerifyCellAndHitPointsAt(GameTileKind.Down, 3, 1, 2);
+            VerifyPoint(1, 3, move.CurPoint);
+            VerifyCellAt(GameTileKind.None, 1, 3); 
         }
 
         private void VerifyPoint(int expectedX, int expectedY, Point pt)
         {
-            Assert.AreEqual(expectedX, pt.X);
-            Assert.AreEqual(expectedY, pt.Y);
+            Assert.AreEqual(expectedX, pt.X, "x mismatch");
+            Assert.AreEqual(expectedY, pt.Y, "y mismatch");
         }
     }
 }
