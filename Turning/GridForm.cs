@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
-using System.Media;
 using TurningModel;
+using System.Threading;
 
 namespace Turning
 {
@@ -16,29 +14,27 @@ namespace Turning
         private int gridMarginInPixels = 10;
         private int arrowMarginInPixels = 5;
         private TurningCellGrid grid;
-        SoundPlayer player;
-
-        private string SourceDirectory ()
-        {
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-            path = path.Replace("\\", "/");
-
-            path = path.Replace("/bin", "");
-            path = path.Replace("/Debug", "");
-            path = path.Replace("/Release", "");
-            return path;
-        }
+        SoundManager soundManager;       
 
         protected override void OnMouseClick(MouseEventArgs e)
         {
             int cellX = (e.Location.X - gridMarginInPixels) / cellSizeInPixels;
             int cellY = (e.Location.Y - gridMarginInPixels) / cellSizeInPixels;
-            //grid.MakeMove(cellX, cellY);
-            grid.PlaceCurrentTile(cellX, cellY);
 
-            player.Play();
-
+            var move = new TurningCellGrid.MoveSequence(grid);
+            move.PlaceTileFirstStep(cellX, cellY, grid.currentTile);
+            soundManager.Play(TurningSound.Place);
             Refresh();
+            Thread.Sleep(500);
+            while (!move.IsMoveFinished())
+            {
+                move.RotateAndShoot();
+                Refresh();
+                soundManager.Play(TurningSound.RotateAndShoot);
+                Thread.Sleep(500);
+            }
+            grid.currentTile = grid.nextTile;
+            grid.nextTile = GameTileUtils.GenerateRandomTileKind();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -47,6 +43,8 @@ namespace Turning
 
             DrawCells(e.Graphics);
             DrawGridLines(e.Graphics);
+            Console.WriteLine("current = " + grid.currentTile + "; next = " + grid.nextTile);
+
         }
 
         private void DrawOneCell(Graphics g, int x, int y)
@@ -106,6 +104,11 @@ namespace Turning
                     g.DrawLine(darkTilePen, ptSide1, ptSide1Middle);
                     break;
             }
+            if (hitPoints < 0)
+            {
+                g.DrawLine(hotTilePen, ptTip, ptSide1);
+                g.DrawLine(hotTilePen, ptTip, ptSide2);
+            }
         }
 
         private void DrawCells(Graphics g)
@@ -145,7 +148,8 @@ namespace Turning
             cellBrush = Brushes.Blue;
 
             grid = new TurningCellGrid();
-            player = new SoundPlayer(SourceDirectory() + "/Resources/drip1.wav");
+            soundManager = new SoundManager();
+           
         }
     }
 }
