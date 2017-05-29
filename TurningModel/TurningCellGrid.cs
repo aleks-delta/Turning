@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace TurningModel
 {
@@ -37,6 +38,11 @@ namespace TurningModel
                 && cellY >= 0 && cellY < height;
         }
 
+        private bool UpForDestruction(int x, int y)
+        {
+            return (HitPointsAt(x, y) <= 0 && CellAt(x, y) != GameTileKind.None);
+        }
+
         public void MakeMove(int cellX, int cellY)
         {
             RotateCellAt(cellX, cellY);
@@ -59,17 +65,9 @@ namespace TurningModel
             grid[x, y].RotateMe();
         }
 
-        private void DestroyFinishedCells()
+        public void DestroyCellAt(int x, int y)
         {
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
-                {
-                    if (HitPointsAt(x,y) <= 0 && CellAt(x,y) != GameTileKind.None)
-                    {
-                        grid[x, y] = new GameTile(GameTileKind.None);
-                    }
-                }
+            grid[x, y] = new GameTile();
         }
-
     }
 }

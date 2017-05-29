@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace TurningModel
@@ -19,7 +20,25 @@ namespace TurningModel
                 {
                     RotateAndShoot();
                 }
-                grid.DestroyFinishedCells();
+                List<Point> finishedCells = GetFinishedCells();
+                DestroyFinishedCells(finishedCells);
+            }
+
+
+            public List<Point> GetFinishedCells()
+            {
+                var finishedCells = new List<Point>();
+                for (int y = 0; y < grid.height; y++)
+                    for (int x = 0; x < grid.width; x++)
+                        if (grid.UpForDestruction(x, y))
+                            finishedCells.Add(new Point(x, y));
+                return finishedCells;
+            }
+
+            private void DestroyFinishedCells(IEnumerable<Point> finishedCells)
+            {
+                foreach (var cell in finishedCells)
+                    grid.DestroyCellAt(cell.X, cell.Y);
             }
 
             public void PlaceTileFirstStep(int cellX, int cellY, GameTileKind tile, int externalHitPoints = -1)

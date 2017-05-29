@@ -18,7 +18,7 @@ namespace Turning
             var sourceDirectoryResources = SourceDirectory()+"/Resources";
             players[TurningSound.Place] = new SoundPlayer(sourceDirectoryResources + "/drip2.wav");
             players[TurningSound.RotateAndShoot] = new SoundPlayer(sourceDirectoryResources + "/lego_click.wav");
-            players[TurningSound.Explode] = new SoundPlayer(sourceDirectoryResources + "/drip1.wav"); 
+            players[TurningSound.Explode] = new SoundPlayer(sourceDirectoryResources + "/kaching.wav"); 
             players[TurningSound.Error] = new SoundPlayer(sourceDirectoryResources + "/uhoh.wav");
         }
 

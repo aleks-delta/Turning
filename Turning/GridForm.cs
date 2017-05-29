@@ -20,19 +20,31 @@ namespace Turning
         {
             int cellX = (e.Location.X - gridMarginInPixels) / cellSizeInPixels;
             int cellY = (e.Location.Y - gridMarginInPixels) / cellSizeInPixels;
+            if (!grid.IsInBounds(cellX, cellY))
+                return;
 
+            const int soundDelay = 500;
             var move = new TurningCellGrid.MoveSequence(grid);
             move.PlaceTileFirstStep(cellX, cellY, grid.currentTile);
             soundManager.Play(TurningSound.Place);
             Refresh();
-            Thread.Sleep(500);
+            Thread.Sleep(soundDelay);
             while (!move.IsMoveFinished())
             {
                 move.RotateAndShoot();
                 Refresh();
                 soundManager.Play(TurningSound.RotateAndShoot);
-                Thread.Sleep(500);
+                Thread.Sleep(soundDelay);
             }
+            var cellsToDestroy = move.GetFinishedCells();
+            foreach (var cell in cellsToDestroy)
+            {
+                grid.DestroyCellAt(cell.X, cell.Y);
+                Refresh();
+                soundManager.Play(TurningSound.Explode);
+                Thread.Sleep(soundDelay);
+            }
+
             grid.currentTile = grid.nextTile;
             grid.nextTile = GameTileUtils.GenerateRandomTileKind();
         }
