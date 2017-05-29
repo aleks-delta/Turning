@@ -49,6 +49,30 @@ namespace TurningModel.Tests
             VerifyCellAt(GameTileKind.None, 1, 3); 
         }
 
+        [Test][Ignore("stepwise test is too complicated")]
+        public void PlaceTile_FeedsBackToOriginalTileAlmostDoneStepwise()
+        {
+            var move = new TurningCellGrid.MoveSequence(grid);
+            //this tile lands as is
+            move.PlaceTile(2, 2, GameTileKind.Down, 1);
+            //this tile will make the Down tile turn Left, which will in turn cause the first tile to turn Down
+            move.PlaceTileFirstStep(1, 2, GameTileKind.Right);
+
+            Assert.False(move.IsMoveFinished());
+
+            VerifyPoint(2, 2, move.CurPoint);
+            move.RotateAndShoot();
+
+            VerifyPoint(1, 2, move.CurPoint);
+            VerifyCellAndHitPointsAt(GameTileKind.Left, 0, 2, 2);
+            //currently the original cell turns to "None" too early, 
+            //we need to keep it alive and keep rotating until the whole move is over
+           // VerifyCellAndHitPointsAt(GameTileKind.Down, 3, 1, 2);
+            //VerifyCellAndHitPointsAt(GameTileKind.Left, 3, 2, 2);
+
+           // VerifyScore(2);
+        }
+
         private void VerifyPoint(int expectedX, int expectedY, Point pt)
         {
             Assert.AreEqual(expectedX, pt.X, "x mismatch");

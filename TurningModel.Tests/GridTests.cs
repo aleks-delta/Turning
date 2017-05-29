@@ -95,7 +95,7 @@ namespace TurningModel.Tests
             VerifyScore(2);
         }
 
-        [Test][Ignore("need to handle keeping tiles alive until the end of the move")]
+        [Test]//[Ignore("need to handle keeping tiles alive until the end of the move")]
         public void PlaceTile_FeedsBackToOriginalTileAlmostDone()
         {
             var move = new TurningCellGrid.MoveSequence(grid);
@@ -104,12 +104,10 @@ namespace TurningModel.Tests
             //this tile will make the Down tile turn Left, which will in turn cause the first tile to turn Down
             move.PlaceTile(1, 2, GameTileKind.Right);
 
-            //currently the original cell turns to "None" too early, 
-            //we need to keep it alive and keep rotating until the whole move is over
             VerifyCellAndHitPointsAt(GameTileKind.Down, 3, 1, 2);
-            VerifyCellAndHitPointsAt(GameTileKind.Left, 3, 2, 2);
+            VerifyCellAt(GameTileKind.None, 2, 2);
 
-            VerifyScore(2);
+            VerifyScore(5);
         }
 
         [Test]

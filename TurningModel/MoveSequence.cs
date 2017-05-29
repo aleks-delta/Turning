@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace TurningModel
 {
@@ -18,6 +19,7 @@ namespace TurningModel
                 {
                     RotateAndShoot();
                 }
+                grid.DestroyFinishedCells();
             }
 
             public void PlaceTileFirstStep(int cellX, int cellY, GameTileKind tile, int externalHitPoints = -1)

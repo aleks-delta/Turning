@@ -25,11 +25,8 @@
 
         public void RotateMe()
         {
-            if (HitPoints > 0)
-                HitPoints--;
-            Kind = (HitPoints == 0) 
-                ? GameTileKind.None 
-                : Kind = GameTileUtils.RotateTile(Kind); 
+            HitPoints--;
+            Kind = GameTileUtils.RotateTile(Kind);
         }
     }
 }

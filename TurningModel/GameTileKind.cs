@@ -88,7 +88,7 @@ namespace TurningModel
             return new Tuple<int, int>(dx, dy);
         }
 
-        internal static GameTileKind GenerateRandomTileKind()
+        public static GameTileKind GenerateRandomTileKind()
         {
             Random r = new Random();
             const double diagProb = 0.0;

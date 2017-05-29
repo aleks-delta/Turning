@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 
 namespace TurningModel
 {
@@ -11,7 +10,7 @@ namespace TurningModel
 
         private GameTile[,] grid;
 
-        GameTileKind currentTile, nextTile;
+        public GameTileKind currentTile, nextTile;
 
         public TurningCellGrid()
         {
@@ -30,7 +29,6 @@ namespace TurningModel
                     grid[x, y] = new GameTile();
                 }
             }
-            Console.WriteLine("current = " + currentTile + "; next = " + nextTile);
         }
 
         public bool IsInBounds(int cellX, int cellY)
@@ -56,19 +54,21 @@ namespace TurningModel
             return grid[x, y].HitPoints;
         }
 
-        public void PlaceCurrentTile(int cellX, int cellY)
-        {
-            Console.WriteLine("current = " + currentTile + "; next = " + nextTile);
-
-            var move = new MoveSequence(this);
-            move.PlaceTile(cellX, cellY, currentTile);
-            currentTile = nextTile;
-            nextTile = GameTileUtils.GenerateRandomTileKind();
-        }
-
         public void RotateCellAt(int x, int y)
         {
             grid[x, y].RotateMe();
+        }
+
+        private void DestroyFinishedCells()
+        {
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                {
+                    if (HitPointsAt(x,y) <= 0 && CellAt(x,y) != GameTileKind.None)
+                    {
+                        grid[x, y] = new GameTile(GameTileKind.None);
+                    }
+                }
         }
 
     }
